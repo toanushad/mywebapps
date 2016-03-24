@@ -25,7 +25,7 @@ app.use(bodyparser.json());
 
 // For get stats, obtain results
 app.get("/stats", function(req, res) {
-    res.send("Number of Wins: " + statistics.wins + " & Number of Losses: " + statistics.losses);
+    res.status(200).json(statistics);
 });
 
 // For post
@@ -40,23 +40,21 @@ app.post("/flip", function(req, res) {
     // Randomly generator 
     var randomOutput = coinFace[Math.floor(Math.random() * coinFace.length)];
     console.log("Generated output: " + randomOutput);
-
-    var result;
+    var outputObj = {};
+    var checkResult;
     // Comparing user choice with the random output
     if (userChoiceResult === randomOutput) {
-        result = "win";
+        checkResult = "win";
         console.log("Win");
         statistics.wins++;
     }
     else {
-        result = "loose"
+        checkResult = "loose"
         console.log("loose");
         statistics.losses++;
     }
-
-    res.json({
-        "result": result
-    });
+    outputObj.result = checkResult;
+    res.status(200).json(outputObj);
 });
 
 // Note on console
