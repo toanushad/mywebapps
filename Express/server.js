@@ -1,4 +1,6 @@
-var express = require("express"), http = require("http"), app;
+var express = require("express"),
+    http = require("http"),
+    app;
 var bodyparser = require("body-parser");
 
 // An object to count the statistics of the flip game
@@ -17,42 +19,46 @@ app.use(express.static(__dirname + "/gameClient"));
 
 app.use(bodyparser.urlencoded({
 
-    extended:true
+    extended: true
 }));
 app.use(bodyparser.json());
 
 // For get stats, obtain results
-app.get("/stats", function(req, res){
+app.get("/stats", function(req, res) {
     res.send("Number of Wins: " + statistics.wins + " & Number of Losses: " + statistics.losses);
 });
 
 // For post
-app.post("/flip", function(req,res){
+app.post("/flip", function(req, res) {
     var userChoice = req.body;
     var userChoiceResult = userChoice.call;
     console.log("User input: " + userChoiceResult);
-    
+
     // Array to store coin face
     var coinFace = ["heads","tails"];
-    
+
     // Randomly generator 
-    var randomOutput = coinFace[Math.floor(Math.random()*coinFace.length)];
-    console.log("Generated output" + randomOutput);
-    
+    var randomOutput = coinFace[Math.floor(Math.random() * coinFace.length)];
+    console.log("Generated output: " + randomOutput);
+
     var result;
     // Comparing user choice with the random output
-    if(userChoice === randomOutput){
+    if (userChoiceResult === randomOutput) {
         result = "win";
         console.log("Win");
-        statistics.wins ++;
-    } else{
+        statistics.wins++;
+    }
+    else {
         result = "loose"
         console.log("loose");
-        statistics.losses ++;
+        statistics.losses++;
     }
 
-    res.json({"result":result});
+    res.json({
+        "result": result
+    });
 });
 
 // Note on console
 console.log("Server listening on port 3000");
+
