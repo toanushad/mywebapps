@@ -1,7 +1,8 @@
-var express = require("express"),redis = require("redis"),
+var express = require("express"),
+    redis = require("redis"),
     http = require("http"),
+    bodyparser = require("body-parser"),
     app;
-var bodyparser = require("body-parser");
 
 // create a client to connect to Redis
 client = redis.createClient();
@@ -29,7 +30,15 @@ app.use(bodyparser.json());
 
 // For get stats, obtain results
 app.get("/stats", function(req, res) {
-    res.status(200).json(statistics);
+    client.mget(["wins","losses"], function(err, result){
+        if(err!==null){
+            console.log(err);
+            return;
+        }
+        statistics.wins = parseInt(result[0], 10) || 0;
+        statistics.losses = parseInt(result[1], 10) || 0;
+    });
+   res.status(200).json(statistics);
 });
 
 // For post
@@ -66,8 +75,10 @@ app.post("/flip", function(req, res) {
 });
 
 // http delete to delete the data in db
-app.delete('/delete', function (req, res) {
-  return res.send('DELETE request to homepage');
+app.delete('/stats', function (req, res) {
+    client.set("wins", 0);
+    client.set("losses", 0);
+    res.send("Reset the values of wins and losses to 0");
 });
 
 // Note on console
