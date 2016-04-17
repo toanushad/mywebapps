@@ -1,0 +1,16 @@
+{
+  "name": "homework7",
+  "version": "1.0.0",
+  "description": "Web Service API for keeping track of a list of links and the number of times they have been clicked",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "anusha",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "mongoose": "^4.4.12"
+  }
+}
