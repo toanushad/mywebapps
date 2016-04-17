@@ -72,6 +72,9 @@ app.get("/links", function (req, res){
 
 // POST to /links
 app.post("/links", function(req, res){
+    // save POST parametrs
+    var newTitle = req.body.title;
+    var newLink = req.body.link;
     // add a new link object to the list with title, link, and click count to zero
     var newDoc = {
         "title": newTitle,
