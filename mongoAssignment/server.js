@@ -114,10 +114,12 @@ app.get('/click/:title', function(req, res) {
         } else {
             LinkDetails.find({
                 title: req.params.title
-            }, {
-                link: 1
             }, function(err, clickedLink) {
-                res.redirect(clickedLink[0].link);
+                if(err !== null){
+                    console.log(err);
+                } else {
+                    res.redirect(clickedLink[0].link);
+                }
             });
         }
     });
