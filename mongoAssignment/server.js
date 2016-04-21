@@ -97,31 +97,28 @@ app.post("/links", function(req, res) {
     });
 });
 
-
 // GET to /click/:title
-app.get("/click/:title", function(req, res) {
+app.get('/click/:title', function(req, res) {
     // increment the click count and redirect to the link to e.g. 
     // GET /click/CPSC%20473 Should increment clicks to 4 and redirect to
     // https://sites.google.com/site/cpsc473
-    var titleparam = req.params;
-    console.log(titleparam);
-    LinkDetails.update(titleparam,
-        // increment count value by 1
-        {
-            $inc: {
-                clicks: 1
-            }
+    LinkDetails.update({
+        title: req.params.title
+    }, {
+        $inc: {
+            clicks: 1
         }
-    );
-    LinkDetails.find({
-        "title": titleparam.title
-    }, function(err, clickedLink) {
+    }, function(err) {
         if (err !== null) {
-            consolelog("ERROR " + err);
-            return;
+            console.log(err);
+        } else {
+            LinkDetails.find({
+                title: req.params.title
+            }, {
+                link: 1
+            }, function(err, clickedLink) {
+                res.redirect(clickedLink[0].link);
+            });
         }
-
-        console.log(clickedLink[0].link);
-        res.redirect(clickedLink[0].link);
     });
 });
