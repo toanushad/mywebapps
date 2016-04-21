@@ -53,7 +53,7 @@ link2.save(function (err){
         // object was not saved
         console.log(err);
     } else {
-        console.log("The link1 object was saved!");
+        console.log("The link2 object was saved!");
     }
 });
 
@@ -115,7 +115,7 @@ app.get("/click/:title", function(req,res){
             return;
         }
         
-        console.log(clickedLink.link);
+        console.log(clickedLink[0].link);
         res.redirect(clickedLink[0].link);
     });
 });
