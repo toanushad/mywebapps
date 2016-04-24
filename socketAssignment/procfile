@@ -1,0 +1,2 @@
+MongoDB: ./mongodb/bin/mongod --dbpath=$HOME/mongodb/data
+NodeServer: node server.js
