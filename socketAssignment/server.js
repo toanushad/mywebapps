@@ -4,13 +4,19 @@ var express = require("express"),
     bodyParser = require("body-parser"),
     // import the monggose library
     mongoose = require("mongoose"),
-    io = require("scoket.io");
+    io = require("socket.io");
   
 app.use(express.static(__dirname + "/client"));
 app.use(bodyParser.json());
 
 // connect to the amazeriffic data store in mongo
-mongoose.connect('mongodb://localhost/amazeriffic');
+mongoose.connect('mongodb://localhost/amazeriffic', function(err){
+    if(err){
+        console.log(err);
+    } else {
+        cosole.log('Connected to MongoDB!');
+    }
+});
 
 // create mongoose model for todos
 var ToDoSchema = mongoose.Schema({

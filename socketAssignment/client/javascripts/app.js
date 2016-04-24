@@ -1,6 +1,8 @@
 var main = function (toDoObjects) {
     "use strict";
 
+    var socket = io.connect('http://localhost:3000');
+
     var toDos = toDoObjects.map(function (toDo) {
           // we'll just return the description
           // of this toDoObject
