@@ -5,7 +5,7 @@
   "main": "server.js",
   "repository":{
       "type": "git",
-      "url": "git://github.com/toanushad/mywebapps/tree/master/socketAssignment.git"
+      "url": "https://github.com/toanushad/mywebapps/tree/master/socketAssignment"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
