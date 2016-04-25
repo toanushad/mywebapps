@@ -2,7 +2,7 @@ var main = function (toDoObjects) {
     "use strict";
 
     var socket = io.connect('http://localhost:3000');
-
+   
     var toDos = toDoObjects.map(function (toDo) {
           // we'll just return the description
           // of this toDoObject
@@ -25,21 +25,40 @@ var main = function (toDoObjects) {
 
             if ($element.parent().is(":nth-child(1)")) {
                 $content = $("<ul>");
-                for (i = toDos.length-1; i >= 0; i--) {
-                    $content.append($("<li>").text(toDos[i]));
-                }
-                socket.on("send new todo", function(list){
-                    if($element[0].className == "active"){
-                        toDoObjects.push(list);
-                        console.log(list);
+                //for (i = toDos.length-1; i >= 0; i--) {
+                   // $content.append($("<li>").text(toDos[i]));
+                //}
+                socket.on("todos from db", function(dbList){
+                    console.log("db list are: ");
+                    // loop through the list
+                    for (i = dblist.length-1; i >=0; i--){
+                       $content.append($("<li>").text(dbList[i])); 
                     }
                 });
+                
+                // display new todo emited from the server.js
+                socket.on("new Todo list", function(newTodoList){
+                    if($element[0].className == "active"){
+                        $content.append($("<li>").text(newTodoList));
+                        //toDoObjects.push(list);
+                        console.log(newTodoList);
+                    }
+                });
+                
             } else if ($element.parent().is(":nth-child(2)")) {
                 $content = $("<ul>");
                 toDos.forEach(function (todo) {
-                    $content.append($("<li>").text(todo));
+                   $content.append($("<li>").text(todo));
                 });
-
+                //socket.on("new Todo list", function(newTodoList){
+                //    if($element[0].className == "active"){
+                //        $content.append($("<li>").text(newTodoList));
+                //        //toDoObjects.push(list);
+                //        console.log(newTodoList);
+                //    }
+                //
+                //});
+                               
             } else if ($element.parent().is(":nth-child(3)")) {
                 var tags = [];
 
@@ -90,8 +109,10 @@ var main = function (toDoObjects) {
                         tags = $tagInput.val().split(","),
                         // create the new to-do item
                         newToDo = {"description":description, "tags":tags};
-                                 
-                    toDoObjects.push({"description":description, "tags":tags});
+                    // Emit the newToDo
+                    socket.emit('send new Todo from client', newToDo);
+                    
+                    //toDoObjects.push({"description":description, "tags":tags});
 
                     // here we'll do a quick post to our todos route
                     $.post("todos", newToDo, function (response) {
