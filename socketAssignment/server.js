@@ -68,7 +68,8 @@ io.sockets.on("connection", function(socket) {
                         socket.emit(err);
                     } else {
                         console.log(result);
-                        socket.emit("todos from db", result);
+                        //socket.broadcast.emit("todos from db", result);
+                        io.emit("todos from db", result);
                     }
                 });
             }
