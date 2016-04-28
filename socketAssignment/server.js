@@ -37,39 +37,6 @@ mongoose.connect('mongodb://localhost/amazeriffic', function(err){
      console.log('Express server listening on port 3000');
  });
  
- app.get("/todos.json", function (req, res) {
-     ToDo.find({}, function (err, toDos){
-         if(err !== null){
-             console.log("ERROR: " + err);
-             return;
-         }
-         res.json(toDos);
-     });
- });
- 
- app.post("/todos", function (req, res) {
-     // the object is now stored in req.body
-     console.log(req.body);
-     var newToDo = new ToDo({
-         "description": req.body.description,
-         "tags": req.body.tags
-         });
- 
-     newToDo.save(function(err, result){
-         if(err !== null){
-             console.log(err);
-             res.send("ERROR");
-         } else {
-             // display all the todo iems 
-             ToDo.find({}, function(err, result){
-                 if(err !== null){
-                     res.send("ERROR");
-                 }
-                 res.json(result);
-             });
-         }
-     });
- });
  
  io.sockets.on("connection", function (socket){
      console.log("socket connection");
@@ -84,10 +51,25 @@ mongoose.connect('mongodb://localhost/amazeriffic', function(err){
         }
     });
      
-     socket.on("send new todo from client", function(newToDo){
-         // broadcast to everyone except for the socket that starts it
-         socket.broadcast.emit("new Todo list", newToDo);
-     });  
- });
+     socket.on("addTodos", function(newToDo){
 
+         console.log("I am sending the todo");
+         var saveNewToDo = new ToDo({"description": newToDo.description, "tag": newToDo.tags});
+         saveNewToDo.save(function (err, result){
+             if (err != null){
+                 socket.emit(err);
+             } else {
+                 ToDo.find({}, function(err, result){
+                     if(err !== null){
+                         console.log("Got Error!");
+                         socket.emit(err);
+                     } else {
+                         console.log(result);
+                         socket.emit("todos from db", result);
+                     }
+                 });
+             }
+         });
+     });
+});     
 
