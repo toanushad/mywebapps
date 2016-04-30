@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <title>A Simple App</title>
+
+    <link href='style.css' rel='stylesheet' type='text/css'>
+  </head>
+
+  <body>
+    <header>
+      <h1>Comments</h1>
+      <p>A simple app that allows a user to input comments</p>
+    </header>
+
+    <main>
+      <section class="comment-input">
+        <p>Add Your Comment:</p>
+        <input type = "text" data-bind="value:myComment"/>
+        <button data-bind="click:commentToAdd, enable:myComment().length > 0">+</button>
+      </section>
+
+      <section class="comments" >
+        <ul data-bind="foreach:allComments">
+          <li>
+            <span  data-bind="text:newCommentLine" ></span>
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>this work is released into the public domain</p>
+    </footer>
+
+    <script type="text/javascript" src="jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="knockout-3.4.0.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
