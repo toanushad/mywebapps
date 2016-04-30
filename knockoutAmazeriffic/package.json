@@ -1,0 +1,22 @@
+{
+  "name": "socketassignment8",
+  "version": "0.0.1",
+  "description": "to-do-app using socket.io",
+  "main": "server.js",
+  "repository":{
+      "type": "git",
+      "url": "https://github.com/toanushad/mywebapps/tree/master/socketAssignment"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "anusha",
+  "license": "ISC",
+  "dependencies":{
+      "body-parser": "^1.15.0",
+      "express": "^4.13.4",
+      "mongoose": "^4.4.12",
+      "socket.io": "^1.4.5"
+  }
+}
