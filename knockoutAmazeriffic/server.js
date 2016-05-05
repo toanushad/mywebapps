@@ -6,7 +6,7 @@ var express = require("express"),
     mongoose = require("mongoose");
 
 var server = http.createServer(app);
-var io = require("socket.io").listen(server);
+//var io = require("socket.io").listen(server);
 
 
 app.use(express.static(__dirname + "/client"));
@@ -30,49 +30,37 @@ var ToDoSchema = mongoose.Schema({
 var ToDo = mongoose.model("ToDo", ToDoSchema);
 
 var server = http.createServer(app);
-io.listen(server);
+//io.listen(server);
 
 // listen for requests
 server.listen(3000, function() {
     console.log('Express server listening on port 3000');
 });
 
-
-io.sockets.on("connection", function(socket) {
-    console.log("socket connection");
-
-    ToDo.find({}, function(err, result) {
-        if (err !== null) {
-            console.log("Got Error!");
-            throw err;
-        } else {
-            console.log("Displaying todo results from database!");
-            socket.emit("todos from db", result);
-        }
+app.get("/todos.json", function (req, res) {
+    ToDo.find({}, function (err, toDos) {
+	res.json(toDos);
     });
+});
 
-    socket.on("addTodos", function(newToDo) {
-
-        console.log("I am sending the todo");
-        var saveNewToDo = new ToDo({
-            "description": newToDo.description,
-            "tags": newToDo.tags
-        });
-        saveNewToDo.save(function(err, result) {
-            if (err != null) {
-                socket.emit(err);
-            } else {
-                ToDo.find({}, function(err, result) {
-                    if (err !== null) {
-                        console.log("Got Error!");
-                        socket.emit(err);
-                    } else {
-                        console.log(result);
-                        //socket.broadcast.emit("todos from db", result);
-                        io.emit("todos from db", result);
-                    }
-                });
-            }
-        });
+app.post("/todos", function (req, res) {
+    console.log(req.body);
+    var newToDo = new ToDo({"description":req.body.description, "tags":req.body.tags});
+    newToDo.save(function (err, result) {
+	if (err !== null) {
+	    // the element did not get saved!
+	    console.log(err);
+	    res.send("ERROR");
+	} else {
+	    // our client expects *all* of the todo items to be returned, so we'll do
+	    // an additional request to maintain compatibility
+	    ToDo.find({}, function (err, result) {
+		if (err !== null) {
+		    // the element did not get saved!
+		    res.send("ERROR");
+		}
+		res.json(result);
+	    });
+	}
     });
 });
