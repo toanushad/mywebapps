@@ -1,127 +1,36 @@
-var socket = io.connect('http://localhost:3000');
-var main = function(toDoObjects) {
-    "use strict";
+var ToDo = function(data) {
+    this.description = ko.observable(data.description);
+    this.tags = ko.observableArray(data.tags);
+}
 
-    var toDos = toDoObjects.map(function(toDo) {
-        // we'll just return the description
-        // of this toDoObject
-        return toDo.description;
-    });
-
-    socket.on("addTodos", function(toDoObjects) {
-        toDos = toDoObjects.map(function(todo) {
-            return todo.description;
-        })
-    });
-
-    $(".tabs a span").toArray().forEach(function(element) {
-        var $element = $(element);
-
-        // create a click handler for this element
-        $element.on("click", function() {
-            var $content,
-                $input,
-                $button,
-                i;
-
-            $(".tabs a span").removeClass("active");
-            $element.addClass("active");
-            $("main .content").empty();
-            if ($element.parent().is(":nth-child(1)")) {
-                $content = $("<ul>");
-                for (i = toDos.length - 1; i >= 0; i--) {
-                    // $content.append($("<li>").text(toDos[i]));
-                    $($("<li>").text(toDos[i])).appendTo($content).hide().slideDown();
-                }
-            } else if ($element.parent().is(":nth-child(2)")) {
-                $content = $("<ul>");
-                toDos.forEach(function(todo) {
-                    $($("<li>").text(todo)).appendTo($content).hide().slideDown();
-                });
-            } else if ($element.parent().is(":nth-child(3)")) {
-                var tags = [];
-
-                toDoObjects.forEach(function(toDo) {
-                    toDo.tags.forEach(function(tag) {
-                        if (tags.indexOf(tag) === -1) {
-                            tags.push(tag);
-                        }
-                    });
-                });
-                console.log(tags);
-
-                var tagObjects = tags.map(function(tag) {
-                    var toDosWithTag = [];
-
-                    toDoObjects.forEach(function(toDo) {
-                        if (toDo.tags.indexOf(tag) !== -1) {
-                            toDosWithTag.push(toDo.description);
-                        }
-                    });
-
-                    return {
-                        "name": tag,
-                        "toDos": toDosWithTag
-                    };
-                });
-
-                tagObjects.forEach(function(tag) {
-                    var $tagName = $("<h3>").text(tag.name),
-                        $content = $("<ul>");
-
-
-                    tag.toDos.forEach(function(description) {
-                        var $li = $("<li>").text(description);
-                        $content.append($li);
-                        $($("<li>").text(toDos[i])).appendTo($content).hide().slideDown();
-                    });
-
-                    $("main .content").append($tagName);
-                    $("main .content").append($content);
-                });
-
-            } else if ($element.parent().is(":nth-child(4)")) {
-                var $input = $("<input>").addClass("description"),
-                    $inputLabel = $("<p>").text("Description: "),
-                    $tagInput = $("<input>").addClass("tags"),
-                    $tagLabel = $("<p>").text("Tags: "),
-                    $button = $("<button>").text("+");
-
-                $button.on("click", function() {
-                    var description = $input.val(),
-                        tags = $tagInput.val().split(","),
-                        // create the new to-do item
-                        newToDo = {
-                            "description": description,
-                            "tags": tags
-                        };
-                    // Emit the newToDo
-                    socket.emit('addTodos', newToDo);
-
-                    //toDoObjects.push({"description":description, "tags":tags});
-                    $input.val("");
-                    $tagInput.val("");
-                    alert("New todo is added");
-                });
-
-                $content = $("<div>").append($inputLabel)
-                    .append($input)
-                    .append($tagLabel)
-                    .append($tagInput)
-                    .append($button);
-            }
-
-            $("main .content").append($content);
-
-            return false;
-        });
-    });
-
-    $(".tabs a:first-child span").trigger("click");
+var TabSection = function (name, selected) {
+    this.name = name;
+    this.isSelected = ko.computed(function () {
+        return this === selected();
+    }, this);
 };
 
-$(document).ready(function() {
-    socket.on("todos from db", function(toDoObjects) {
-        main(toDoObjects);
-    });
-});
+var ViewModel = function() {
+    var self = this;
+
+    self.viewTab = ko.observable();
+
+    self.allTabs = ko.observableArray([
+        new TabSection('Newest', self.viewTab),
+        new TabSection('Oldest', self.viewTab),
+        new TabSection('Tags', self.viewTab),
+        new TabSection('Add', self.viewTab)
+    ]);
+    
+    //inialize to the first tab section
+    self.viewTab(self.allTabs()[0]);
+
+    self.todos = ko.observableArray([]);
+    self.newDescription = ko.observable("");
+    self.newTags = ko.observable("");
+    self.tagsTabData = ko.observable([]);
+
+    // TO-DO 
+}
+
+ko.applyBindings(new ViewModel());
